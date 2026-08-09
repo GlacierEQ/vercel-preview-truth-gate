@@ -41,17 +41,17 @@
     },
     "OPERABLE_AND_OBSERVABLE": {
       "status": "PASS",
-      "at": "2026-08-09T07:32Z",
-      "evidence": "scripts/operate.py dual-run PASS + primary ok"
+      "at": "2026-08-09T07:40Z",
+      "evidence": "scripts/operate.py dual-run PASS + primary ok; SCRATCH launch.log"
     },
     "PROOF_RECEIPT_BOUND": {
       "status": "PASS",
-      "at": "2026-08-09T07:32Z",
-      "evidence": "machine/proof_receipt.json digest=16810ad4a3a6626f\u2026"
+      "at": "2026-08-09T07:40Z",
+      "evidence": "machine/proof_receipt.json digest=57fa1e42d01d111a\u2026; SCRATCH proof.log dual_run_ok=true"
     },
     "AUTHORITY_BOUND": {
       "status": "PASS",
-      "at": "2026-08-09T07:32Z",
+      "at": "2026-08-09T07:40Z",
       "evidence": "machine/promotion_authority.json local HMAC grant verified"
     },
     "CANONICAL_POSITION_RESOLVED": {
@@ -95,23 +95,23 @@
       "note": "adversarial module + make-heavy bodybuilder wave 8/8"
     },
     {
-      "at": "2026-08-09T07:32Z",
+      "at": "2026-08-09T07:40Z",
       "from": "ADVERSARIAL_VERIFIED",
       "to": "OPERABLE",
       "gate": "OPERABLE_AND_OBSERVABLE",
       "result": "PASS",
-      "note": "cold-start operate dual-run; primary observable correct"
+      "note": "cold-start operate dual-run green; primary observable correct"
     },
     {
-      "at": "2026-08-09T07:32Z",
+      "at": "2026-08-09T07:40Z",
       "from": "OPERABLE",
       "to": "PROOF_REPRODUCED",
       "gate": "PROOF_RECEIPT_BOUND",
       "result": "PASS",
-      "note": "proof receipt bound to source_sha; unittest dual-run PASS"
+      "note": "unittest dual-run PASS after src. import fix; proof receipt SHA-bound"
     },
     {
-      "at": "2026-08-09T07:32Z",
+      "at": "2026-08-09T07:40Z",
       "from": "PROOF_REPRODUCED",
       "to": "PROMOTED",
       "gate": "AUTHORITY_BOUND",
@@ -123,10 +123,11 @@
   "scores_ref": "machine/excellence-scores.json",
   "evolution_cursor": "next:canonical_position_only_if_estate_role_resolved",
   "wave": {
-    "id": "GO-RESIDUAL-2026-08-09",
+    "id": "GO-RESIDUAL-GREEN-2026-08-09",
     "proof_ok": true,
     "operable_ok": true,
-    "promoted_at": "2026-08-09T07:32Z",
-    "reproof_ts": "2026-08-09T07:32Z"
+    "promoted_at": "2026-08-09T07:40Z",
+    "reproof_ts": "2026-08-09T07:40Z",
+    "scratch": "/var/folders/w3/hldw78112gzbvgd2_pj1bg3h0000gn/T/grok-goal-e6d702d11234/implementer"
   }
 }

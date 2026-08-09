@@ -2,9 +2,9 @@
   "schema": "glaciereq.promotion-authority-grant.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
   "source_sha": "f3fb5d0cc88a532c99aa547d38a3f770ce88ce471d4ee9c3bdf30f919354ec95",
-  "proof_receipt_digest": "16810ad4a3a6626f4518edd13b847cc2e201bc0b28e345da11cbece6c1793849",
-  "not_after": 1786347127.216716,
-  "mac": "a63fd25c06c374e7d75238c13cb732d9dffd501c5823e0bf5d5d6c2c6002a356",
+  "proof_receipt_digest": "57fa1e42d01d111a04db38ab6971800b488714743908ee1383a4e54674e930f1",
+  "not_after": 1786347645.105215,
+  "mac": "55354613b9278392d3364dd1f3edab483e0f068f004ba84e92228fc0bb25e0d9",
   "issuer": "local_operator_promotion_authority",
   "verified": true
 }

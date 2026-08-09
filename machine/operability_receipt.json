@@ -1,7 +1,7 @@
 {
   "schema": "glaciereq.operability-receipt.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
-  "at": "2026-08-09T07:32Z",
+  "at": "2026-08-09T07:40Z",
   "source_sha": "f3fb5d0cc88a532c99aa547d38a3f770ce88ce471d4ee9c3bdf30f919354ec95",
   "entry": "scripts/operate.py",
   "primary_output": {
@@ -11,5 +11,6 @@
     "reason": "TARGET_PREVIEW_MAX_TESTED"
   },
   "dual_run_ok": true,
-  "result": "PASS"
+  "result": "PASS",
+  "scratch_launch_log": "wave_a/vercel-preview-truth-gate/launch.log"
 }
