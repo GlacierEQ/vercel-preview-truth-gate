@@ -1,0 +1,102 @@
+{
+  "schema": "glaciereq.repo-excellence-state.v1",
+  "repository": "GlacierEQ/vercel-preview-truth-gate",
+  "principal_state": "ADVERSARIAL_VERIFIED",
+  "gates": {
+    "IDENTITY_RESOLVED": {
+      "status": "PASS",
+      "at": "2026-08-09T07:09Z",
+      "evidence": "github GlacierEQ/vercel-preview-truth-gate"
+    },
+    "PROBLEM_VERIFIED": {
+      "status": "PASS",
+      "at": "2026-08-09T07:09Z",
+      "evidence": "ISSUE_CONTRACT.md"
+    },
+    "TARGET_CONTRACT_FROZEN": {
+      "status": "PENDING"
+    },
+    "DONOR_PLAN_RESOLVED": {
+      "status": "PENDING"
+    },
+    "VERTICAL_SLICE_ALIVE": {
+      "status": "PASS",
+      "at": "2026-08-09T07:10Z",
+      "evidence": "wave GO re-proof + test_adversarial"
+    },
+    "CENTRAL_MECHANISM_PRESENT": {
+      "status": "PASS",
+      "at": "2026-08-09T07:10Z",
+      "evidence": "wave GO re-proof + test_adversarial"
+    },
+    "DETERMINISTIC_PROOF_GREEN": {
+      "status": "PASS",
+      "at": "2026-08-09T07:10Z",
+      "evidence": "wave GO re-proof + test_adversarial"
+    },
+    "ADVERSARIAL_SURVIVAL": {
+      "status": "PASS",
+      "at": "2026-08-09T07:10Z",
+      "evidence": "wave GO re-proof + test_adversarial"
+    },
+    "OPERABLE_AND_OBSERVABLE": {
+      "status": "PENDING"
+    },
+    "PROOF_RECEIPT_BOUND": {
+      "status": "PASS",
+      "at": "2026-08-09T07:10Z",
+      "evidence": "wave GO re-proof + test_adversarial"
+    },
+    "AUTHORITY_BOUND": {
+      "status": "PENDING"
+    },
+    "CANONICAL_POSITION_RESOLVED": {
+      "status": "PENDING"
+    },
+    "EVOLUTION_CURSOR_DEFINED": {
+      "status": "PASS",
+      "at": "2026-08-09T07:09Z",
+      "evidence": "deepen_to_bodybuilder_G0-G9"
+    }
+  },
+  "history": [
+    {
+      "at": "2026-08-09T07:09Z",
+      "from": "DISCOVERED",
+      "to": "IDENTITY_RESOLVED",
+      "gate": "IDENTITY_RESOLVED",
+      "result": "PASS"
+    },
+    {
+      "at": "2026-08-09T07:09Z",
+      "from": "IDENTITY_RESOLVED",
+      "to": "PROBLEM_VERIFIED",
+      "gate": "PROBLEM_VERIFIED",
+      "result": "PASS"
+    },
+    {
+      "at": "2026-08-09T07:09Z",
+      "from": "SEEDED",
+      "to": "VERTICAL_SLICE",
+      "gate": "VERTICAL_SLICE_ALIVE",
+      "result": "PASS",
+      "note": "src mechanism present; formal contract freeze still pending"
+    },
+    {
+      "at": "2026-08-09T07:10Z",
+      "from": "TESTED",
+      "to": "ADVERSARIAL_VERIFIED",
+      "gate": "ADVERSARIAL_SURVIVAL",
+      "result": "PASS",
+      "note": "adversarial module + make-heavy bodybuilder wave 8/8"
+    }
+  ],
+  "contract_ref": "machine/target-contract.json",
+  "scores_ref": "machine/excellence-scores.json",
+  "evolution_cursor": "next:freeze_target_contract+operable_observability",
+  "wave": {
+    "id": "GO-2026-08-09",
+    "proof_ok": true,
+    "reproof_ts": "2026-08-09T07:09:49Z"
+  }
+}

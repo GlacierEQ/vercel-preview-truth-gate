@@ -1,0 +1,31 @@
+{
+  "schema": "glaciereq.repo-target-contract.v1",
+  "identity": {
+    "repository_id": "GlacierEQ/vercel-preview-truth-gate",
+    "local_path": "/Users/kcbflux/job-app/repos/vercel-preview-truth-gate"
+  },
+  "current": {
+    "state": "VERTICAL_SLICE",
+    "implemented": true,
+    "tested": false,
+    "deployed": false
+  },
+  "target": {
+    "purpose": "# ISSUE CONTRACT\n## Pain\nPreview deploys get described as production-verified.\n## Success\n- preview max claim = TESTED\n- production requires production receipts\n",
+    "central_bottleneck": "see ISSUE_CONTRACT"
+  },
+  "invariants": [],
+  "promotion": {
+    "required_tests": [
+      "unit",
+      "adversarial"
+    ],
+    "require_exact_source_sha": true,
+    "require_receipt": true,
+    "require_nonclaims": true
+  },
+  "nonclaims": [
+    "no employer affiliation",
+    "reference implementation only"
+  ]
+}
