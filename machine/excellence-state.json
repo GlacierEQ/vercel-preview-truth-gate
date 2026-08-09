@@ -1,7 +1,7 @@
 {
   "schema": "glaciereq.repo-excellence-state.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
-  "principal_state": "ADVERSARIAL_VERIFIED",
+  "principal_state": "PROMOTED",
   "gates": {
     "IDENTITY_RESOLVED": {
       "status": "PASS",
@@ -40,15 +40,19 @@
       "evidence": "wave GO re-proof + test_adversarial"
     },
     "OPERABLE_AND_OBSERVABLE": {
-      "status": "PENDING"
+      "status": "PASS",
+      "at": "2026-08-09T07:32Z",
+      "evidence": "scripts/operate.py dual-run PASS + primary ok"
     },
     "PROOF_RECEIPT_BOUND": {
       "status": "PASS",
-      "at": "2026-08-09T07:10Z",
-      "evidence": "wave GO re-proof + test_adversarial"
+      "at": "2026-08-09T07:32Z",
+      "evidence": "machine/proof_receipt.json digest=16810ad4a3a6626f\u2026"
     },
     "AUTHORITY_BOUND": {
-      "status": "PENDING"
+      "status": "PASS",
+      "at": "2026-08-09T07:32Z",
+      "evidence": "machine/promotion_authority.json local HMAC grant verified"
     },
     "CANONICAL_POSITION_RESOLVED": {
       "status": "PENDING"
@@ -89,14 +93,40 @@
       "gate": "ADVERSARIAL_SURVIVAL",
       "result": "PASS",
       "note": "adversarial module + make-heavy bodybuilder wave 8/8"
+    },
+    {
+      "at": "2026-08-09T07:32Z",
+      "from": "ADVERSARIAL_VERIFIED",
+      "to": "OPERABLE",
+      "gate": "OPERABLE_AND_OBSERVABLE",
+      "result": "PASS",
+      "note": "cold-start operate dual-run; primary observable correct"
+    },
+    {
+      "at": "2026-08-09T07:32Z",
+      "from": "OPERABLE",
+      "to": "PROOF_REPRODUCED",
+      "gate": "PROOF_RECEIPT_BOUND",
+      "result": "PASS",
+      "note": "proof receipt bound to source_sha; unittest dual-run PASS"
+    },
+    {
+      "at": "2026-08-09T07:32Z",
+      "from": "PROOF_REPRODUCED",
+      "to": "PROMOTED",
+      "gate": "AUTHORITY_BOUND",
+      "result": "PASS",
+      "note": "AUTHORITY_BOUND via local operator promotion authority (not Helix)"
     }
   ],
   "contract_ref": "machine/target-contract.json",
   "scores_ref": "machine/excellence-scores.json",
-  "evolution_cursor": "next:freeze_target_contract+operable_observability",
+  "evolution_cursor": "next:canonical_position_only_if_estate_role_resolved",
   "wave": {
-    "id": "GO-2026-08-09",
+    "id": "GO-RESIDUAL-2026-08-09",
     "proof_ok": true,
-    "reproof_ts": "2026-08-09T07:09:49Z"
+    "operable_ok": true,
+    "promoted_at": "2026-08-09T07:32Z",
+    "reproof_ts": "2026-08-09T07:32Z"
   }
 }

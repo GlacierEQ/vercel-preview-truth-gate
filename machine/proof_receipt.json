@@ -1,0 +1,28 @@
+{
+  "schema": "glaciereq.proof-receipt.v1",
+  "repository": "GlacierEQ/vercel-preview-truth-gate",
+  "source_sha": "f3fb5d0cc88a532c99aa547d38a3f770ce88ce471d4ee9c3bdf30f919354ec95",
+  "proof_id": "wave-a-residual-vercel-preview-truth-gate-1786260727",
+  "environment": {
+    "python": "3.9.6"
+  },
+  "tests": [
+    "unittest discover -s tests -v (x2)"
+  ],
+  "adversarial_tests": [
+    "tests/test_adversarial.py"
+  ],
+  "runtime": {
+    "operate": "scripts/operate.py (x2)",
+    "dual_run_ok": true
+  },
+  "result": "PASS",
+  "limitations": [
+    "not production deployed",
+    "reference implementation only"
+  ],
+  "timestamp": "2026-08-09T07:32Z",
+  "artifact_hashes": {
+    "operability_receipt": "45d7bbcdd21ed06e47f810822888f1cfaeffbb88415a40a43261b0282b1aa017"
+  }
+}
