@@ -1,0 +1,15 @@
+{
+  "schema": "glaciereq.repo-substance-gate.v1",
+  "repository": "GlacierEQ/vercel-preview-truth-gate",
+  "classification": "REAL_COMPONENT",
+  "independent_boundary": "deployment truth enforcement after deployed readback",
+  "must_have": [
+    "executable gate",
+    "exact source SHA comparison",
+    "semantic invariant enforcement",
+    "deterministic decision receipt",
+    "non-zero refusal exit",
+    "CI positive and negative execution"
+  ],
+  "archive_or_harvest_if": "the executable release-gate boundary is removed or becomes documentation-only"
+}
