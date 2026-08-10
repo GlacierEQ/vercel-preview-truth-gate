@@ -1,8 +1,8 @@
 from __future__ import annotations
-import importlib.util
-from pathlib import Path
-import unittest
 
+import importlib.util
+import unittest
+from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "verify_deployment_claim.py"
 spec = importlib.util.spec_from_file_location("verify_deployment_claim", SCRIPT)
@@ -29,6 +29,10 @@ class VerifyDeploymentClaimTests(unittest.TestCase):
     def test_parse_checks_rejects_empty_name(self):
         with self.assertRaises(ValueError):
             module.parse_checks(["=true"])
+
+    def test_parse_checks_rejects_duplicate_name(self):
+        with self.assertRaisesRegex(ValueError, "duplicate semantic check name"):
+            module.parse_checks(["homepage=false", "homepage=true"])
 
 
 if __name__ == "__main__":
