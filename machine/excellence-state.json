@@ -1,7 +1,7 @@
 {
   "schema":"glaciereq.repo-excellence-state.v1",
   "repository":"GlacierEQ/vercel-preview-truth-gate",
-  "principal_state":"PROMOTED",
+  "principal_state":"EVOLVING",
   "gates":{
     "IDENTITY_RESOLVED":{"status":"PASS","at":"2026-08-09T07:09Z","evidence":"github GlacierEQ/vercel-preview-truth-gate"},
     "PROBLEM_VERIFIED":{"status":"PASS","at":"2026-08-09T07:09Z","evidence":"ISSUE_CONTRACT.md"},
@@ -14,8 +14,8 @@
     "OPERABLE_AND_OBSERVABLE":{"status":"PASS","at":"2026-08-09T07:40Z","evidence":"scripts/operate.py dual-run PASS + primary ok; SCRATCH launch.log"},
     "PROOF_RECEIPT_BOUND":{"status":"PASS","at":"2026-08-09T07:40Z","evidence":"machine/proof_receipt.json digest=57fa1e42d01d111a…; SCRATCH proof.log dual_run_ok=true"},
     "AUTHORITY_BOUND":{"status":"PASS","at":"2026-08-09T07:40Z","evidence":"machine/promotion_authority.json local HMAC grant verified"},
-    "CANONICAL_POSITION_RESOLVED":{"status":"PENDING"},
-    "EVOLUTION_CURSOR_DEFINED":{"status":"PASS","at":"2026-08-09T07:09Z","evidence":"deepen_to_bodybuilder_G0-G9"}
+    "CANONICAL_POSITION_RESOLVED":{"status":"PASS","at":"2026-08-10T01:18:00Z","evidence":"machine/canonical-position.json"},
+    "EVOLUTION_CURSOR_DEFINED":{"status":"PASS","at":"2026-08-10T01:18:00Z","evidence":"machine/canonical-position.json#next_evolution"}
   },
   "history":[
     {"at":"2026-08-09T07:09Z","from":"DISCOVERED","to":"IDENTITY_RESOLVED","gate":"IDENTITY_RESOLVED","result":"PASS"},
@@ -28,11 +28,14 @@
     {"at":"2026-08-10T00:59:00Z","from":"TESTED","to":"ADVERSARIAL_VERIFIED","gate":"ADVERSARIAL_SURVIVAL","result":"PASS"},
     {"at":"2026-08-10T00:59:00Z","from":"ADVERSARIAL_VERIFIED","to":"OPERABLE","gate":"OPERABLE_AND_OBSERVABLE","result":"PASS"},
     {"at":"2026-08-10T00:59:00Z","from":"OPERABLE","to":"PROOF_REPRODUCED","gate":"PROOF_RECEIPT_BOUND","result":"PASS"},
-    {"at":"2026-08-10T00:59:00Z","from":"PROOF_REPRODUCED","to":"PROMOTED","gate":"AUTHORITY_BOUND","result":"PASS"}
+    {"at":"2026-08-10T00:59:00Z","from":"PROOF_REPRODUCED","to":"PROMOTED","gate":"AUTHORITY_BOUND","result":"PASS"},
+    {"at":"2026-08-10T01:18:00Z","from":"PROMOTED","to":"CANONICAL","gate":"CANONICAL_POSITION_RESOLVED","result":"PASS","note":"independent Vercel-specialist position resolved; identity and lineage preserved"},
+    {"at":"2026-08-10T01:18:00Z","from":"CANONICAL","to":"EVOLVING","gate":"EVOLUTION_CURSOR_DEFINED","result":"PASS","note":"next evolution bound in machine/canonical-position.json"}
   ],
   "contract_ref":"machine/target-contract.json",
   "scores_ref":"machine/excellence-scores.json",
-  "evolution_cursor":"next:canonical_position_only_if_estate_role_resolved",
+  "canonical_position_ref":"machine/canonical-position.json",
+  "evolution_cursor":"next:signed preview-prod lineage + claim revocation on environment divergence",
   "wave":{"id":"GO-RESIDUAL-GREEN-2026-08-09","proof_ok":true,"operable_ok":true,"promoted_at":"2026-08-09T07:40Z","reproof_ts":"2026-08-09T07:40Z","scratch":"/var/folders/w3/hldw78112gzbvgd2_pj1bg3h0000gn/T/grok-goal-e6d702d11234/implementer"},
   "reconciliation":{"at":"2026-08-10T00:59:00Z","previous_state_claim":"PROMOTED_WITH_PREREQUISITE_GAPS","repair":"freeze target contract; resolve donor plan; replay preserved downstream proof in legal gate order","governance":"AKOS public projection of Monolith Repository Excellence"}
 }
