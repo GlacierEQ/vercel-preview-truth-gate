@@ -1,17 +1,44 @@
 name: tests
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   py:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with: { python-version: "3.11" }
       - run: python -m unittest discover -s tests -v
+      - name: Verify production claim accepts exact bound evidence
+        run: >-
+          python scripts/verify_deployment_claim.py
+          --target PRODUCTION
+          --strength PRODUCTION_VERIFIED
+          --expected-sha abc123
+          --observed-sha abc123
+          --check homepage_resume_match=true
+          --check machine_contract_match=true
+      - name: Verify stale source SHA fails closed
+        shell: bash
+        run: |
+          if python scripts/verify_deployment_claim.py \
+            --target PRODUCTION \
+            --strength PRODUCTION_VERIFIED \
+            --expected-sha expected \
+            --observed-sha stale \
+            --check homepage_resume_match=true; then
+            echo "stale source SHA was incorrectly accepted" >&2
+            exit 1
+          fi
   node:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4 pinned
         with: { node-version: "20" }
       - run: node ts/run_tests.mjs
