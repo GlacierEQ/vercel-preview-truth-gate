@@ -1,0 +1,33 @@
+{
+  "schema": "glaciereq.canonical-position-proof.v1",
+  "repository": "GlacierEQ/vercel-preview-truth-gate",
+  "source_sha": "9a3076ba71a6792ea452681fa0f532663635fb4e",
+  "workflow": {
+    "name": "tests",
+    "run_id": 31401313384,
+    "conclusion": "success",
+    "jobs": ["py", "node"]
+  },
+  "verified_invariants": [
+    "preview target refuses production-verified claim",
+    "staging target refuses production-verified claim",
+    "production-verified requires explicit evidence",
+    "source readback mismatch fails closed",
+    "at least one named semantic invariant is required",
+    "semantic invariant results must be boolean",
+    "failed semantic invariants refuse production verification",
+    "Python and Node enforce the same production-verification boundary",
+    "decision fingerprints bind normalized evidence identity"
+  ],
+  "workflow_readback_checks": [
+    "exact bound production evidence accepted",
+    "stale source SHA refused"
+  ],
+  "claim_ceiling": "independent_reference_environment_bound_claim_truth_gate",
+  "nonclaims": [
+    "no deployment execution",
+    "no external Vercel state retrieval by the core gate",
+    "no Vercel affiliation or adoption",
+    "no proof of lower-strength execution from target ceiling alone"
+  ]
+}
