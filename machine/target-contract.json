@@ -1,64 +1,69 @@
 {
   "schema": "glaciereq.repo-target-contract.v1",
-<<<<<<< HEAD
-  "identity": {"repository_id": "GlacierEQ/vercel-preview-truth-gate"},
+  "identity": {
+    "repository_id": "GlacierEQ/vercel-preview-truth-gate",
+    "family": "elite-estate",
+    "canonical_identity": "preview-truth-gate"
+  },
   "current": {
-    "principal_state": "PROMOTED",
+    "state": "EVOLVING",
+    "principal_state": "EVOLVING",
     "implemented": true,
     "tested": true,
     "adversarial_verified": true,
     "operable": true,
     "proof_receipt_bound": true,
     "authority_bound": true,
-    "deployed": false
+    "deployed": false,
+    "canonical_position_resolved": true,
+    "exact_head_proof": {
+      "source_sha": "9a3076ba71a6792ea452681fa0f532663635fb4e",
+      "workflow_run_id": 31401313384,
+      "jobs": ["py", "node"],
+      "result": "PASS"
+    }
   },
   "target": {
-    "purpose": "Prevent preview-environment evidence from being promoted into production claims without production-specific receipts.",
-    "central_bottleneck": "A successful preview can be incorrectly described as production verification when environment identity is not part of claim authority.",
+    "purpose": "Prevent preview or staging context from authorizing production-verification claims without production-specific source readback and semantic evidence.",
+    "central_bottleneck": "Environment labels can be mistaken for proof, and cross-language gate implementations can disagree about production-verification requirements.",
     "success": [
-      "Preview evidence cannot authorize a claim above TESTED.",
-      "Production claims require production-environment receipts.",
-      "Claim authority remains bound to the environment that produced the evidence."
+      "Preview target caps claims at TESTED.",
+      "Staging target caps claims at DEPLOYED.",
+      "PRODUCTION_VERIFIED requires a production target, exact source-ref equality, and at least one explicitly boolean semantic invariant.",
+      "Python and Node enforce the same production-verification boundary.",
+      "Decision receipts bind target, requested strength, ceiling, evidence identity, and terminal reason."
     ]
   },
   "invariants": [
-    "preview evidence cannot establish production verification",
-    "production claims require production receipts",
-    "environment identity is part of claim authority"
+    "preview context cannot authorize production verification",
+    "staging context cannot authorize production verification",
+    "production verification requires exact source readback",
+    "semantic invariant results are explicit booleans",
+    "target ceiling is not proof of lower-strength execution"
   ],
   "donor_plan": {
     "status": "RESOLVED",
     "strategy": "INDEPENDENT_MECHANISM_PRESERVED",
     "donors": [],
-    "basis": "The current repository owns the implemented preview-truth gate; no donor implementation is required to define or operate it.",
-    "future_extraction": "Reusable environment-bound claim semantics may be extracted only with lineage, functional/proof equivalence, and preservation of this repository's identity."
+    "basis": "The repository owns the implemented environment-bound truth gate; no donor implementation is required.",
+    "siblings": ["GlacierEQ/vercel-deploy-claim-compiler"],
+    "integration_exercised": false
   },
   "promotion": {
-    "required_tests": ["unit", "adversarial", "operability"],
+    "canonical_gate": "PASS",
+    "next_state": "EVOLVING",
     "require_exact_source_sha": true,
     "require_receipt": true,
-    "require_nonclaims": true
-  },
-  "nonclaims": ["no Vercel affiliation", "reference deployment-claim engineering system, not a production Vercel control service"]
-=======
-  "identity": {
-    "repository_id": "GlacierEQ/vercel-preview-truth-gate",
-    "family": "elite-estate"
-  },
-  "current": {
-    "state": "PROMOTED",
-    "implemented": true,
-    "tested": true,
-    "deployed": false
+    "require_nonclaims": true,
+    "next_cursor": "compose_evidence_graph_claim_compiler_receipts_and_add_divergence_revocation"
   },
   "nonclaims": [
-    "no employer affiliation",
-    "no production deployment without receipt"
+    "no Vercel affiliation or adoption",
+    "not a production Vercel control service",
+    "no deployment execution",
+    "no external Vercel state fetch by the core gate",
+    "target ceilings do not prove testing or deployment occurred",
+    "no sibling integration without executable composition proof"
   ],
-  "donor_plan": {
-    "mode": "none",
-    "donors": []
-  },
-  "frozen_at": "2026-08-10T04:12Z"
->>>>>>> bd072a7 (chore: Hyper Excellence Activation & structural matrix alignment)
+  "frozen_at": "2026-08-10T15:03:00Z"
 }
