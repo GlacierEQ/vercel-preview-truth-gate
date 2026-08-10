@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Verify a deployment claim from observed headers and semantic checks.
+"""Verify a deployment claim from extracted readback fields.
 
-This is intentionally dependency-free so CI or a release job can pipe a JSON
-readback into the gate and fail closed on a stale source SHA or semantic drift.
+This is intentionally dependency-free for CI and release jobs. Callers must extract
+readback values and pass them through --expected-sha, --observed-sha, and repeated
+--check arguments. The gate fails closed on stale source identity, malformed input,
+or semantic drift.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -29,7 +32,7 @@ def parse_args() -> argparse.Namespace:
         action="append",
         default=[],
         metavar="NAME=true|false",
-        help="Semantic invariant result; repeat for multiple checks.",
+        help="Semantic invariant result; repeat for multiple distinct checks.",
     )
     return parser.parse_args()
 
@@ -40,8 +43,11 @@ def parse_checks(values: list[str]) -> dict[str, bool]:
         if "=" not in item:
             raise ValueError(f"invalid check {item!r}: expected NAME=true|false")
         name, raw = item.split("=", 1)
+        name = name.strip()
         if not name:
             raise ValueError("semantic check name must not be empty")
+        if name in checks:
+            raise ValueError(f"duplicate semantic check name: {name!r}")
         normalized = raw.strip().lower()
         if normalized not in {"true", "false"}:
             raise ValueError(f"invalid boolean for {name!r}: {raw!r}")
