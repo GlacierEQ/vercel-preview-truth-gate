@@ -1,31 +1,42 @@
 {
   "schema": "glaciereq.repo-target-contract.v1",
-  "identity": {
-    "repository_id": "GlacierEQ/vercel-preview-truth-gate",
-    "local_path": "/Users/kcbflux/job-app/repos/vercel-preview-truth-gate"
-  },
+  "identity": {"repository_id": "GlacierEQ/vercel-preview-truth-gate"},
   "current": {
-    "state": "VERTICAL_SLICE",
+    "principal_state": "PROMOTED",
     "implemented": true,
-    "tested": false,
+    "tested": true,
+    "adversarial_verified": true,
+    "operable": true,
+    "proof_receipt_bound": true,
+    "authority_bound": true,
     "deployed": false
   },
   "target": {
-    "purpose": "# ISSUE CONTRACT\n## Pain\nPreview deploys get described as production-verified.\n## Success\n- preview max claim = TESTED\n- production requires production receipts\n",
-    "central_bottleneck": "see ISSUE_CONTRACT"
+    "purpose": "Prevent preview-environment evidence from being promoted into production claims without production-specific receipts.",
+    "central_bottleneck": "A successful preview can be incorrectly described as production verification when environment identity is not part of claim authority.",
+    "success": [
+      "Preview evidence cannot authorize a claim above TESTED.",
+      "Production claims require production-environment receipts.",
+      "Claim authority remains bound to the environment that produced the evidence."
+    ]
   },
-  "invariants": [],
+  "invariants": [
+    "preview evidence cannot establish production verification",
+    "production claims require production receipts",
+    "environment identity is part of claim authority"
+  ],
+  "donor_plan": {
+    "status": "RESOLVED",
+    "strategy": "INDEPENDENT_MECHANISM_PRESERVED",
+    "donors": [],
+    "basis": "The current repository owns the implemented preview-truth gate; no donor implementation is required to define or operate it.",
+    "future_extraction": "Reusable environment-bound claim semantics may be extracted only with lineage, functional/proof equivalence, and preservation of this repository's identity."
+  },
   "promotion": {
-    "required_tests": [
-      "unit",
-      "adversarial"
-    ],
+    "required_tests": ["unit", "adversarial", "operability"],
     "require_exact_source_sha": true,
     "require_receipt": true,
     "require_nonclaims": true
   },
-  "nonclaims": [
-    "no employer affiliation",
-    "reference implementation only"
-  ]
+  "nonclaims": ["no Vercel affiliation", "reference deployment-claim engineering system, not a production Vercel control service"]
 }
