@@ -1,1 +1,21 @@
-{"capabilities": ["hyper-scaling"]}
+{
+  "schema": "glaciereq.capability-surface.v1",
+  "repository": "GlacierEQ/vercel-preview-truth-gate",
+  "capabilities": [
+    "environment_bound_claim_ceiling",
+    "preview_production_claim_separation",
+    "staging_production_claim_separation",
+    "exact_source_readback_guard",
+    "strict_boolean_semantic_invariant_gate",
+    "deterministic_evidence_fingerprint",
+    "deterministic_truth_decision_receipt",
+    "python_node_production_truth_parity"
+  ],
+  "truth_boundary": "Environment ceilings limit claim authority but do not prove lower-strength testing or deployment. PRODUCTION_VERIFIED requires exact supplied source readback plus named boolean semantic checks. The core gate does not deploy, fetch external Vercel state, or establish Vercel affiliation/adoption.",
+  "relationship_boundary": {
+    "GlacierEQ/vercel-deploy-claim-compiler": {
+      "relationship": "complementary evidence-graph claim compiler",
+      "integration_exercised": false
+    }
+  }
+}
