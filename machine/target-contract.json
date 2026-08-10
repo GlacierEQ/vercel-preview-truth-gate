@@ -1,5 +1,6 @@
 {
   "schema": "glaciereq.repo-target-contract.v1",
+<<<<<<< HEAD
   "identity": {"repository_id": "GlacierEQ/vercel-preview-truth-gate"},
   "current": {
     "principal_state": "PROMOTED",
@@ -39,4 +40,25 @@
     "require_nonclaims": true
   },
   "nonclaims": ["no Vercel affiliation", "reference deployment-claim engineering system, not a production Vercel control service"]
+=======
+  "identity": {
+    "repository_id": "GlacierEQ/vercel-preview-truth-gate",
+    "family": "elite-estate"
+  },
+  "current": {
+    "state": "PROMOTED",
+    "implemented": true,
+    "tested": true,
+    "deployed": false
+  },
+  "nonclaims": [
+    "no employer affiliation",
+    "no production deployment without receipt"
+  ],
+  "donor_plan": {
+    "mode": "none",
+    "donors": []
+  },
+  "frozen_at": "2026-08-10T04:12Z"
+>>>>>>> bd072a7 (chore: Hyper Excellence Activation & structural matrix alignment)
 }

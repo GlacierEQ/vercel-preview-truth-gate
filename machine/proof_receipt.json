@@ -1,14 +1,15 @@
 {
   "schema": "glaciereq.proof-receipt.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
-  "source_sha": "f3fb5d0cc88a532c99aa547d38a3f770ce88ce471d4ee9c3bdf30f919354ec95",
-  "proof_id": "wave-a-residual-green-vercel-preview-truth-gate-1786261245",
+  "source_sha": "19dbec5d3ecaf4f7b6dc7cc19b39fa5d4a565ac8ce39f4d647a4c0a6fdb72990",
+  "proof_id": "elite-vercel-preview-truth-gate-1786335149",
   "environment": {
-    "python": "3.9.6",
-    "PYTHONPATH": "."
+    "python": "/Users/kcbflux/job-app/excellence/.venv-elite/bin/python",
+    "PYTHONPATH": "/Users/kcbflux/job-app/repos/vercel-preview-truth-gate:/Users/kcbflux/job-app/repos/vercel-preview-truth-gate/src",
+    "entry": "unittest"
   },
   "tests": [
-    "PYTHONPATH=. python3 -m unittest discover -s tests -v (x2)"
+    "/Users/kcbflux/job-app/excellence/.venv-elite/bin/python -m unittest discover -s tests -v (x2)"
   ],
   "adversarial_tests": [
     "tests/test_adversarial.py"
@@ -23,9 +24,8 @@
     "not production deployed",
     "reference implementation only"
   ],
-  "timestamp": "2026-08-09T07:40Z",
+  "timestamp": "2026-08-10T04:12Z",
   "artifact_hashes": {
-    "operability_receipt": "6f47bade219b47909be991adf6ae77b7f92a8fcef680bf8825d6d1bf44fc0a23"
-  },
-  "scratch_proof_log": "wave_a/vercel-preview-truth-gate/proof.log"
+    "operability_receipt": "7428c50081227342a176e69e9e541f42b1d1138f646026e8b9ea0371b3819f75"
+  }
 }

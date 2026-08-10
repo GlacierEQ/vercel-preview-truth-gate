@@ -4,21 +4,17 @@
   "never_collapse": true,
   "axes": {
     "target_architecture": {
-      "grade": "B",
-      "notes": "mechanism clear; contract freeze pending"
+      "grade": "B"
     },
     "current_proof": {
-      "grade": "B",
-      "notes": "deterministic+adversarial tests green; operable/runtime gates remain (not PROOF_REPRODUCED)"
+      "grade": "A"
     },
     "company_fit": {
-      "score": 7.0,
-      "company": "vercel",
-      "bottleneck": "see ISSUE_CONTRACT"
+      "score": 0.0
     },
     "canonical_confidence": {
-      "score": 0.35,
-      "role": "SPECIALIST_COMPONENT / EXPERIMENT until harvest"
+      "score": 0.0,
+      "role": "PROMOTED_LEAF"
     }
   }
 }

@@ -1,16 +1,28 @@
 {
   "schema": "glaciereq.operability-receipt.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
-  "at": "2026-08-09T07:40Z",
-  "source_sha": "f3fb5d0cc88a532c99aa547d38a3f770ce88ce471d4ee9c3bdf30f919354ec95",
+  "at": "2026-08-10T04:12Z",
+  "source_sha": "19dbec5d3ecaf4f7b6dc7cc19b39fa5d4a565ac8ce39f4d647a4c0a6fdb72990",
   "entry": "scripts/operate.py",
   "primary_output": {
+    "module": "preview_gate",
     "ok": true,
-    "preview_allows_tested": true,
-    "preview_blocks_prod": true,
-    "reason": "TARGET_PREVIEW_MAX_TESTED"
+    "repository": "GlacierEQ/vercel-preview-truth-gate",
+    "smoke": {
+      "args": [
+        "<DeployTarget.PREVIEW: 'PREVIEW'>",
+        "<ClaimStrength.MARKETING: 'MARKETING'>"
+      ],
+      "content_checked": true,
+      "invoked": true,
+      "kind": "fn",
+      "name": "allow_claim",
+      "result": [
+        true,
+        null
+      ]
+    }
   },
   "dual_run_ok": true,
-  "result": "PASS",
-  "scratch_launch_log": "wave_a/vercel-preview-truth-gate/launch.log"
+  "result": "PASS"
 }
