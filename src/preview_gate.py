@@ -1,4 +1,5 @@
 """Preview truth gate — deploy target bounds claim strength and binds strong claims to evidence."""
+
 from __future__ import annotations
 
 import hashlib
@@ -73,7 +74,8 @@ def evaluate_claim(
     """Evaluate a claim and produce a deterministic decision receipt.
 
     Target ceilings prevent obvious overclaiming. A PRODUCTION_VERIFIED claim also
-    requires exact source-SHA readback and every declared semantic invariant to pass.
+    requires exact source-SHA readback and at least one named semantic invariant,
+    with every declared invariant passing.
     """
     mx = max_claim_for(target)
     reason: str | None = None
@@ -89,6 +91,8 @@ def evaluate_claim(
             reason = "SOURCE_SHA_REQUIRED"
         elif evidence.expected_source_sha != evidence.observed_source_sha:
             reason = "SOURCE_SHA_MISMATCH"
+        elif not evidence.semantic_checks:
+            reason = "SEMANTIC_INVARIANT_REQUIRED"
         else:
             failed = sorted(name for name, ok in evidence.semantic_checks.items() if not ok)
             if failed:
