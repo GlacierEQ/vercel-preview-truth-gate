@@ -1,133 +1,38 @@
 {
-  "schema": "glaciereq.repo-excellence-state.v1",
-  "repository": "GlacierEQ/vercel-preview-truth-gate",
-  "principal_state": "PROMOTED",
-  "gates": {
-    "IDENTITY_RESOLVED": {
-      "status": "PASS",
-      "at": "2026-08-09T07:09Z",
-      "evidence": "github GlacierEQ/vercel-preview-truth-gate"
-    },
-    "PROBLEM_VERIFIED": {
-      "status": "PASS",
-      "at": "2026-08-09T07:09Z",
-      "evidence": "ISSUE_CONTRACT.md"
-    },
-    "TARGET_CONTRACT_FROZEN": {
-      "status": "PENDING"
-    },
-    "DONOR_PLAN_RESOLVED": {
-      "status": "PENDING"
-    },
-    "VERTICAL_SLICE_ALIVE": {
-      "status": "PASS",
-      "at": "2026-08-09T07:10Z",
-      "evidence": "wave GO re-proof + test_adversarial"
-    },
-    "CENTRAL_MECHANISM_PRESENT": {
-      "status": "PASS",
-      "at": "2026-08-09T07:10Z",
-      "evidence": "wave GO re-proof + test_adversarial"
-    },
-    "DETERMINISTIC_PROOF_GREEN": {
-      "status": "PASS",
-      "at": "2026-08-09T07:10Z",
-      "evidence": "wave GO re-proof + test_adversarial"
-    },
-    "ADVERSARIAL_SURVIVAL": {
-      "status": "PASS",
-      "at": "2026-08-09T07:10Z",
-      "evidence": "wave GO re-proof + test_adversarial"
-    },
-    "OPERABLE_AND_OBSERVABLE": {
-      "status": "PASS",
-      "at": "2026-08-09T07:40Z",
-      "evidence": "scripts/operate.py dual-run PASS + primary ok; SCRATCH launch.log"
-    },
-    "PROOF_RECEIPT_BOUND": {
-      "status": "PASS",
-      "at": "2026-08-09T07:40Z",
-      "evidence": "machine/proof_receipt.json digest=57fa1e42d01d111a\u2026; SCRATCH proof.log dual_run_ok=true"
-    },
-    "AUTHORITY_BOUND": {
-      "status": "PASS",
-      "at": "2026-08-09T07:40Z",
-      "evidence": "machine/promotion_authority.json local HMAC grant verified"
-    },
-    "CANONICAL_POSITION_RESOLVED": {
-      "status": "PENDING"
-    },
-    "EVOLUTION_CURSOR_DEFINED": {
-      "status": "PASS",
-      "at": "2026-08-09T07:09Z",
-      "evidence": "deepen_to_bodybuilder_G0-G9"
-    }
+  "schema":"glaciereq.repo-excellence-state.v1",
+  "repository":"GlacierEQ/vercel-preview-truth-gate",
+  "principal_state":"PROMOTED",
+  "gates":{
+    "IDENTITY_RESOLVED":{"status":"PASS","at":"2026-08-09T07:09Z","evidence":"github GlacierEQ/vercel-preview-truth-gate"},
+    "PROBLEM_VERIFIED":{"status":"PASS","at":"2026-08-09T07:09Z","evidence":"ISSUE_CONTRACT.md"},
+    "TARGET_CONTRACT_FROZEN":{"status":"PASS","at":"2026-08-10T00:59:00Z","evidence":"machine/target-contract.json"},
+    "DONOR_PLAN_RESOLVED":{"status":"PASS","at":"2026-08-10T00:59:00Z","evidence":"machine/target-contract.json#donor_plan"},
+    "VERTICAL_SLICE_ALIVE":{"status":"PASS","at":"2026-08-09T07:10Z","evidence":"wave GO re-proof + test_adversarial"},
+    "CENTRAL_MECHANISM_PRESENT":{"status":"PASS","at":"2026-08-09T07:10Z","evidence":"wave GO re-proof + test_adversarial"},
+    "DETERMINISTIC_PROOF_GREEN":{"status":"PASS","at":"2026-08-09T07:10Z","evidence":"wave GO re-proof + test_adversarial"},
+    "ADVERSARIAL_SURVIVAL":{"status":"PASS","at":"2026-08-09T07:10Z","evidence":"wave GO re-proof + test_adversarial"},
+    "OPERABLE_AND_OBSERVABLE":{"status":"PASS","at":"2026-08-09T07:40Z","evidence":"scripts/operate.py dual-run PASS + primary ok; SCRATCH launch.log"},
+    "PROOF_RECEIPT_BOUND":{"status":"PASS","at":"2026-08-09T07:40Z","evidence":"machine/proof_receipt.json digest=57fa1e42d01d111a…; SCRATCH proof.log dual_run_ok=true"},
+    "AUTHORITY_BOUND":{"status":"PASS","at":"2026-08-09T07:40Z","evidence":"machine/promotion_authority.json local HMAC grant verified"},
+    "CANONICAL_POSITION_RESOLVED":{"status":"PENDING"},
+    "EVOLUTION_CURSOR_DEFINED":{"status":"PASS","at":"2026-08-09T07:09Z","evidence":"deepen_to_bodybuilder_G0-G9"}
   },
-  "history": [
-    {
-      "at": "2026-08-09T07:09Z",
-      "from": "DISCOVERED",
-      "to": "IDENTITY_RESOLVED",
-      "gate": "IDENTITY_RESOLVED",
-      "result": "PASS"
-    },
-    {
-      "at": "2026-08-09T07:09Z",
-      "from": "IDENTITY_RESOLVED",
-      "to": "PROBLEM_VERIFIED",
-      "gate": "PROBLEM_VERIFIED",
-      "result": "PASS"
-    },
-    {
-      "at": "2026-08-09T07:09Z",
-      "from": "SEEDED",
-      "to": "VERTICAL_SLICE",
-      "gate": "VERTICAL_SLICE_ALIVE",
-      "result": "PASS",
-      "note": "src mechanism present; formal contract freeze still pending"
-    },
-    {
-      "at": "2026-08-09T07:10Z",
-      "from": "TESTED",
-      "to": "ADVERSARIAL_VERIFIED",
-      "gate": "ADVERSARIAL_SURVIVAL",
-      "result": "PASS",
-      "note": "adversarial module + make-heavy bodybuilder wave 8/8"
-    },
-    {
-      "at": "2026-08-09T07:40Z",
-      "from": "ADVERSARIAL_VERIFIED",
-      "to": "OPERABLE",
-      "gate": "OPERABLE_AND_OBSERVABLE",
-      "result": "PASS",
-      "note": "cold-start operate dual-run green; primary observable correct"
-    },
-    {
-      "at": "2026-08-09T07:40Z",
-      "from": "OPERABLE",
-      "to": "PROOF_REPRODUCED",
-      "gate": "PROOF_RECEIPT_BOUND",
-      "result": "PASS",
-      "note": "unittest dual-run PASS after src. import fix; proof receipt SHA-bound"
-    },
-    {
-      "at": "2026-08-09T07:40Z",
-      "from": "PROOF_REPRODUCED",
-      "to": "PROMOTED",
-      "gate": "AUTHORITY_BOUND",
-      "result": "PASS",
-      "note": "AUTHORITY_BOUND via local operator promotion authority (not Helix)"
-    }
+  "history":[
+    {"at":"2026-08-09T07:09Z","from":"DISCOVERED","to":"IDENTITY_RESOLVED","gate":"IDENTITY_RESOLVED","result":"PASS"},
+    {"at":"2026-08-09T07:09Z","from":"IDENTITY_RESOLVED","to":"PROBLEM_VERIFIED","gate":"PROBLEM_VERIFIED","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"PROBLEM_VERIFIED","to":"TARGET_CONTRACTED","gate":"TARGET_CONTRACT_FROZEN","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"TARGET_CONTRACTED","to":"SEEDED","gate":"DONOR_PLAN_RESOLVED","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"SEEDED","to":"VERTICAL_SLICE","gate":"VERTICAL_SLICE_ALIVE","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"VERTICAL_SLICE","to":"IMPLEMENTED","gate":"CENTRAL_MECHANISM_PRESENT","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"IMPLEMENTED","to":"TESTED","gate":"DETERMINISTIC_PROOF_GREEN","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"TESTED","to":"ADVERSARIAL_VERIFIED","gate":"ADVERSARIAL_SURVIVAL","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"ADVERSARIAL_VERIFIED","to":"OPERABLE","gate":"OPERABLE_AND_OBSERVABLE","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"OPERABLE","to":"PROOF_REPRODUCED","gate":"PROOF_RECEIPT_BOUND","result":"PASS"},
+    {"at":"2026-08-10T00:59:00Z","from":"PROOF_REPRODUCED","to":"PROMOTED","gate":"AUTHORITY_BOUND","result":"PASS"}
   ],
-  "contract_ref": "machine/target-contract.json",
-  "scores_ref": "machine/excellence-scores.json",
-  "evolution_cursor": "next:canonical_position_only_if_estate_role_resolved",
-  "wave": {
-    "id": "GO-RESIDUAL-GREEN-2026-08-09",
-    "proof_ok": true,
-    "operable_ok": true,
-    "promoted_at": "2026-08-09T07:40Z",
-    "reproof_ts": "2026-08-09T07:40Z",
-    "scratch": "/var/folders/w3/hldw78112gzbvgd2_pj1bg3h0000gn/T/grok-goal-e6d702d11234/implementer"
-  }
+  "contract_ref":"machine/target-contract.json",
+  "scores_ref":"machine/excellence-scores.json",
+  "evolution_cursor":"next:canonical_position_only_if_estate_role_resolved",
+  "wave":{"id":"GO-RESIDUAL-GREEN-2026-08-09","proof_ok":true,"operable_ok":true,"promoted_at":"2026-08-09T07:40Z","reproof_ts":"2026-08-09T07:40Z","scratch":"/var/folders/w3/hldw78112gzbvgd2_pj1bg3h0000gn/T/grok-goal-e6d702d11234/implementer"},
+  "reconciliation":{"at":"2026-08-10T00:59:00Z","previous_state_claim":"PROMOTED_WITH_PREREQUISITE_GAPS","repair":"freeze target contract; resolve donor plan; replay preserved downstream proof in legal gate order","governance":"AKOS public projection of Monolith Repository Excellence"}
 }
