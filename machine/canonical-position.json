@@ -1,0 +1,22 @@
+{
+  "schema": "glaciereq.repo-canonical-position.v1",
+  "repository": "GlacierEQ/vercel-preview-truth-gate",
+  "position_state": "RESOLVED",
+  "role": "company_specific_specialist_system",
+  "company_target": "Vercel",
+  "canonical_identity": "preview-truth-gate",
+  "unique_value": [
+    "preview evidence is prevented from authorizing production claims",
+    "production claim authority requires production-environment receipts",
+    "environment identity remains bound to the evidence that produced a claim"
+  ],
+  "capability_contribution": {
+    "family": "environment_bound_claim_authority",
+    "extractable_mechanisms": ["preview-to-production claim fence", "environment-bound evidence authority", "production-receipt requirement"],
+    "ownership": "This repository remains the owning Vercel-specialist implementation; extraction preserves identity and lineage."
+  },
+  "integration_policy": {"preserve_repository_identity":true,"preserve_lineage":true,"presentation_independent":true,"size_or_loc_not_dispositive":true,"absorption_requires_functional_equivalence":true,"absorption_requires_proof_equivalence":true},
+  "next_evolution": "Bind preview and production artifacts into signed deployment lineage and add claim revocation when production diverges from preview evidence.",
+  "evidence_refs": ["ISSUE_CONTRACT.md","machine/target-contract.json","machine/proof_receipt.json","machine/operability_receipt.json","machine/promotion_authority.json"],
+  "nonclaims": ["no Vercel affiliation", "not a production Vercel control service"]
+}
