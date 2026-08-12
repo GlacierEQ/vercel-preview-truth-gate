@@ -6,13 +6,17 @@ jobs:
   py:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with: { python-version: "3.11" }
-      - run: python -m unittest discover -s tests -v
-      - name: Verify production claim accepts exact bound evidence
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.11"
+      - name: Run Python behavior tests
+        run: python -m unittest discover -s tests -v
+      - name: Run full deployment-readback demonstration
+        run: python scripts/operate.py
+      - name: Verify compatibility evidence accepts exact bound source
         run: >-
           python scripts/verify_deployment_claim.py
           --target PRODUCTION
@@ -33,12 +37,24 @@ jobs:
             echo "stale source SHA was incorrectly accepted" >&2
             exit 1
           fi
+      - name: Verify live mode refuses absent credentials
+        shell: bash
+        run: |
+          if env -u VERCEL_TOKEN python scripts/verify_deployment_claim.py \
+            --deployment example.vercel.app \
+            --target PRODUCTION \
+            --expected-sha abc123 \
+            --probe 'homepage,/,200'; then
+            echo "live mode incorrectly succeeded without Vercel credentials" >&2
+            exit 1
+          fi
   node:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4 pinned
-        with: { node-version: "20" }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "20"
       - run: node ts/run_tests.mjs
