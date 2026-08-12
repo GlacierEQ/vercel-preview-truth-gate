@@ -1,9 +1,9 @@
 """Live Vercel deployment readback and semantic probe engine.
 
-This module turns the existing claim evaluator into an operational verifier:
-it obtains deployment metadata from Vercel, reads the deployed Git source SHA,
-executes live HTTP probes against the deployment URL, and binds all observed
-facts into a deterministic receipt before evaluating claim strength.
+The verifier obtains Vercel deployment metadata, resolves an operational origin,
+reads source identity from deployment metadata or an explicitly named runtime
+response header, executes semantic HTTP probes, and binds observations into a
+deterministic receipt before evaluating claim strength.
 """
 from __future__ import annotations
 
@@ -35,19 +35,15 @@ def _digest(value: object) -> str:
 def _normalize_url(value: str) -> str:
     value = value.strip()
     if not value:
-        raise ValueError("deployment_url is required")
+        raise ValueError("deployment URL is required")
     if not value.startswith(("https://", "http://")):
         value = "https://" + value
     return value.rstrip("/")
 
 
 def _extract_git_sha(metadata: Mapping[str, Any]) -> str | None:
-    """Extract Vercel's deployed Git SHA from known public metadata shapes."""
     meta = metadata.get("meta")
-    candidates: list[Any] = [
-        metadata.get("gitCommitSha"),
-        metadata.get("githubCommitSha"),
-    ]
+    candidates: list[Any] = [metadata.get("gitCommitSha"), metadata.get("githubCommitSha")]
     if isinstance(meta, Mapping):
         candidates.extend(
             [
@@ -74,8 +70,28 @@ def _infer_target(metadata: Mapping[str, Any]) -> DeployTarget:
             return DeployTarget.PRODUCTION
         if normalized in {"staging", "stage"}:
             return DeployTarget.STAGING
-    # Vercel's default non-production deployment environment is preview.
     return DeployTarget.PREVIEW
+
+
+def _runtime_origin(metadata: Mapping[str, Any], deployment: str, override: str | None) -> str:
+    if override:
+        return _normalize_url(override)
+    if _infer_target(metadata) is DeployTarget.PRODUCTION:
+        aliases = metadata.get("alias")
+        if isinstance(aliases, Sequence) and not isinstance(aliases, (str, bytes, bytearray)):
+            for alias in aliases:
+                if isinstance(alias, str) and alias.strip():
+                    return _normalize_url(alias)
+    raw = metadata.get("url")
+    return _normalize_url(str(raw or deployment))
+
+
+def _header(headers: Mapping[str, str], name: str) -> str | None:
+    wanted = name.lower()
+    for key, value in headers.items():
+        if key.lower() == wanted:
+            return value.strip() if isinstance(value, str) else str(value)
+    return None
 
 
 @dataclass(frozen=True)
@@ -117,13 +133,29 @@ class ProbeObservation:
 
 
 @dataclass(frozen=True)
+class SourceObservation:
+    url: str
+    header_name: str
+    value: str | None
+    status: int | None
+    body_sha256: str | None
+    reason: str | None
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
 class DeploymentReadbackReceipt:
     deployment_url: str
     deployment_id: str | None
     target: DeployTarget
     expected_source_sha: str
     observed_source_sha: str | None
+    source_identity_method: str
+    metadata_source_sha: str | None
     metadata_fingerprint: str
+    source_observation: SourceObservation | None
     probes: tuple[ProbeObservation, ...]
     decision: GateDecision
     created_at: float
@@ -136,7 +168,10 @@ class DeploymentReadbackReceipt:
             "target": self.target.value,
             "expected_source_sha": self.expected_source_sha,
             "observed_source_sha": self.observed_source_sha,
+            "source_identity_method": self.source_identity_method,
+            "metadata_source_sha": self.metadata_source_sha,
             "metadata_fingerprint": self.metadata_fingerprint,
+            "source_observation": self.source_observation.as_dict() if self.source_observation else None,
             "probes": [p.as_dict() for p in self.probes],
             "decision": {
                 "allowed": self.decision.allowed,
@@ -160,20 +195,13 @@ class VercelApiError(RuntimeError):
 Transport = Callable[[str, str, Mapping[str, str], bytes | None, float], tuple[int, Mapping[str, str], bytes]]
 
 
-def _default_transport(
-    method: str,
-    url: str,
-    headers: Mapping[str, str],
-    data: bytes | None,
-    timeout: float,
-) -> tuple[int, Mapping[str, str], bytes]:
+def _default_transport(method: str, url: str, headers: Mapping[str, str], data: bytes | None, timeout: float) -> tuple[int, Mapping[str, str], bytes]:
     req = Request(url=url, method=method, headers=dict(headers), data=data)
     try:
         with urlopen(req, timeout=timeout, context=ssl.create_default_context()) as response:
             return response.status, dict(response.headers.items()), response.read()
     except HTTPError as exc:
-        body = exc.read()
-        return exc.code, dict(exc.headers.items()) if exc.headers else {}, body
+        return exc.code, dict(exc.headers.items()) if exc.headers else {}, exc.read()
     except URLError as exc:
         raise VercelApiError(None, f"network_error:{exc.reason}") from exc
 
@@ -181,16 +209,9 @@ def _default_transport(
 class VercelDeploymentVerifier:
     API_BASE = "https://api.vercel.com"
 
-    def __init__(
-        self,
-        token: str,
-        *,
-        team_id: str | None = None,
-        transport: Transport | None = None,
-        clock: Callable[[], float] | None = None,
-    ) -> None:
+    def __init__(self, token: str, *, team_id: str | None = None, transport: Transport | None = None, clock: Callable[[], float] | None = None) -> None:
         if not token.strip():
-            raise ValueError("Vercel access token is required for source readback")
+            raise ValueError("Vercel access token is required for deployment metadata readback")
         self._token = token.strip()
         self._team_id = team_id.strip() if team_id else None
         self._transport = transport or _default_transport
@@ -209,7 +230,7 @@ class VercelDeploymentVerifier:
             {
                 "Authorization": f"Bearer {self._token}",
                 "Accept": "application/json",
-                "User-Agent": "GlacierEQ-Vercel-Truth-Readback/1.0",
+                "User-Agent": "GlacierEQ-Vercel-Truth-Readback/1.1",
             },
             None,
             15.0,
@@ -237,25 +258,55 @@ class VercelDeploymentVerifier:
                 raise KeyError(path)
         return current
 
-    def run_probe(
-        self,
-        deployment_url: str,
-        spec: ProbeSpec,
-        *,
-        headers: Mapping[str, str] | None = None,
-    ) -> ProbeObservation:
+    def read_source_header(self, deployment_url: str, header_name: str, *, path: str = "/", headers: Mapping[str, str] | None = None, timeout_s: float = 10.0) -> SourceObservation:
+        if not header_name.strip():
+            raise ValueError("source header name must not be blank")
+        if not path.startswith("/"):
+            raise ValueError("source path must start with /")
+        base = _normalize_url(deployment_url) + "/"
+        url = urljoin(base, path.lstrip("/"))
+        request_headers = {
+            "Accept": "*/*",
+            "User-Agent": "GlacierEQ-Vercel-Truth-Readback/1.1",
+            **dict(headers or {}),
+        }
+        try:
+            status, response_headers, body = self._transport("GET", url, request_headers, None, timeout_s)
+            value = _header(response_headers, header_name)
+            reason = None
+            if status >= 400:
+                reason = f"source_readback_http_{status}"
+            elif not value:
+                reason = "source_header_missing"
+            return SourceObservation(
+                url=url,
+                header_name=header_name,
+                value=value,
+                status=status,
+                body_sha256=hashlib.sha256(body).hexdigest(),
+                reason=reason,
+            )
+        except Exception as exc:
+            return SourceObservation(
+                url=url,
+                header_name=header_name,
+                value=None,
+                status=None,
+                body_sha256=None,
+                reason=f"request_error:{type(exc).__name__}:{exc}",
+            )
+
+    def run_probe(self, deployment_url: str, spec: ProbeSpec, *, headers: Mapping[str, str] | None = None) -> ProbeObservation:
         base = _normalize_url(deployment_url) + "/"
         url = urljoin(base, spec.path.lstrip("/"))
         request_headers = {
             "Accept": "application/json,text/plain,text/html,*/*",
-            "User-Agent": "GlacierEQ-Vercel-Truth-Readback/1.0",
+            "User-Agent": "GlacierEQ-Vercel-Truth-Readback/1.1",
             **dict(headers or {}),
         }
         started = time.perf_counter()
         try:
-            status, _response_headers, body = self._transport(
-                "GET", url, request_headers, None, spec.timeout_s
-            )
+            status, _response_headers, body = self._transport("GET", url, request_headers, None, spec.timeout_s)
             latency_ms = round((time.perf_counter() - started) * 1000.0, 3)
             digest = hashlib.sha256(body).hexdigest()
             reason: str | None = None
@@ -274,25 +325,16 @@ class VercelDeploymentVerifier:
                 else:
                     if observed != spec.json_equals:
                         reason = "json_value_mismatch"
-            return ProbeObservation(
-                name=spec.name,
-                url=url,
-                passed=reason is None,
-                status=status,
-                latency_ms=latency_ms,
-                body_sha256=digest,
-                reason=reason,
-                observed_value=observed,
-            )
+            return ProbeObservation(spec.name, url, reason is None, status, latency_ms, digest, reason, observed)
         except Exception as exc:
             return ProbeObservation(
-                name=spec.name,
-                url=url,
-                passed=False,
-                status=None,
-                latency_ms=round((time.perf_counter() - started) * 1000.0, 3),
-                body_sha256=None,
-                reason=f"request_error:{type(exc).__name__}:{exc}",
+                spec.name,
+                url,
+                False,
+                None,
+                round((time.perf_counter() - started) * 1000.0, 3),
+                None,
+                f"request_error:{type(exc).__name__}:{exc}",
             )
 
     def verify(
@@ -304,6 +346,9 @@ class VercelDeploymentVerifier:
         requested_strength: ClaimStrength = ClaimStrength.PRODUCTION_VERIFIED,
         expected_target: DeployTarget | None = None,
         deployment_headers: Mapping[str, str] | None = None,
+        runtime_origin: str | None = None,
+        source_header: str | None = None,
+        source_path: str = "/",
     ) -> DeploymentReadbackReceipt:
         if not expected_source_sha.strip():
             raise ValueError("expected_source_sha is required")
@@ -311,17 +356,39 @@ class VercelDeploymentVerifier:
             raise ValueError("at least one live semantic probe is required")
 
         metadata = self.get_deployment(deployment)
-        observed_sha = _extract_git_sha(metadata)
         target = _infer_target(metadata)
-        deployment_url = _normalize_url(str(metadata.get("url") or deployment))
+        deployment_url = _runtime_origin(metadata, deployment, runtime_origin)
         deployment_id = str(metadata.get("id")) if metadata.get("id") else None
         metadata_fp = _digest(metadata)
-        observations = tuple(
-            self.run_probe(deployment_url, spec, headers=deployment_headers) for spec in probes
-        )
+        metadata_sha = _extract_git_sha(metadata)
+
+        source_observation: SourceObservation | None = None
+        runtime_sha: str | None = None
+        if source_header:
+            source_observation = self.read_source_header(
+                deployment_url,
+                source_header,
+                path=source_path,
+                headers=deployment_headers,
+            )
+            runtime_sha = source_observation.value if source_observation.reason is None else None
+
+        observed_sha = runtime_sha or metadata_sha
+        if runtime_sha:
+            source_method = "runtime_header"
+        elif metadata_sha:
+            source_method = "vercel_metadata"
+        else:
+            source_method = "missing"
+
+        observations = tuple(self.run_probe(deployment_url, spec, headers=deployment_headers) for spec in probes)
         checks = {probe.name: probe.passed for probe in observations}
         if expected_target is not None:
             checks["target_matches_expected"] = target is expected_target
+        if source_header:
+            checks["runtime_source_header_readable"] = runtime_sha is not None
+        if runtime_sha and metadata_sha:
+            checks["metadata_runtime_source_match"] = runtime_sha == metadata_sha
 
         evidence = DeploymentEvidence(
             expected_source_sha=expected_source_sha,
@@ -336,7 +403,10 @@ class VercelDeploymentVerifier:
             "target": target.value,
             "expected_source_sha": expected_source_sha,
             "observed_source_sha": observed_sha,
+            "source_identity_method": source_method,
+            "metadata_source_sha": metadata_sha,
             "metadata_fingerprint": metadata_fp,
+            "source_observation": source_observation.as_dict() if source_observation else None,
             "probes": [p.as_dict() for p in observations],
             "decision_fingerprint": decision.fingerprint,
             "created_at": created_at,
@@ -347,7 +417,10 @@ class VercelDeploymentVerifier:
             target=target,
             expected_source_sha=expected_source_sha,
             observed_source_sha=observed_sha,
+            source_identity_method=source_method,
+            metadata_source_sha=metadata_sha,
             metadata_fingerprint=metadata_fp,
+            source_observation=source_observation,
             probes=observations,
             decision=decision,
             created_at=created_at,

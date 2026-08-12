@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Verify deployment truth from either live Vercel readback or explicit evidence.
-
-Live mode is preferred and obtains the observed source SHA plus semantic results
-itself. Legacy explicit-evidence mode remains for compatibility with existing CI
-jobs that already extracted trusted readback fields upstream.
-"""
+"""Verify deployment truth from live Vercel readback or explicit upstream evidence."""
 from __future__ import annotations
 
 import argparse
@@ -40,12 +35,9 @@ def parse_checks(values: list[str]) -> dict[str, bool]:
 
 
 def parse_probe(value: str) -> ProbeSpec:
-    # NAME,PATH,STATUS[,contains=TEXT][,json=path:JSON_LITERAL]
     parts = value.split(",")
     if len(parts) < 3:
-        raise argparse.ArgumentTypeError(
-            "probe must be NAME,PATH,STATUS[,contains=TEXT][,json=path:JSON_LITERAL]"
-        )
+        raise argparse.ArgumentTypeError("probe must be NAME,PATH,STATUS[,contains=TEXT][,json=path:JSON_LITERAL]")
     name, path, raw_status, *options = parts
     try:
         status = int(raw_status)
@@ -73,41 +65,39 @@ def parse_probe(value: str) -> ProbeSpec:
         raise argparse.ArgumentTypeError(str(exc)) from exc
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--target", choices=[t.value for t in DeployTarget])
-    parser.add_argument(
-        "--strength",
-        choices=[s.value for s in ClaimStrength],
-        default=ClaimStrength.PRODUCTION_VERIFIED.value,
-    )
-    parser.add_argument("--expected-sha", required=True)
-
-    # Live Vercel readback mode.
-    parser.add_argument("--deployment", help="Vercel deployment ID, hostname, or URL")
-    parser.add_argument("--team-id", default=os.getenv("VERCEL_TEAM_ID"))
-    parser.add_argument("--token", default=os.getenv("VERCEL_TOKEN"))
-    parser.add_argument("--probe", action="append", type=parse_probe, default=[])
-    parser.add_argument("--header", action="append", default=[], metavar="NAME=VALUE")
-
-    # Compatibility mode for upstream-extracted evidence.
-    parser.add_argument("--observed-sha")
-    parser.add_argument("--check", action="append", default=[], metavar="NAME=true|false")
-    return parser.parse_args()
-
-
 def parse_headers(values: list[str]) -> dict[str, str]:
     headers: dict[str, str] = {}
     for item in values:
         if "=" not in item:
             raise ValueError(f"invalid header {item!r}: expected NAME=VALUE")
         name, value = item.split("=", 1)
-        if not name.strip():
+        name = name.strip()
+        if not name:
             raise ValueError("header name must not be empty")
         if name in headers:
             raise ValueError(f"duplicate header name: {name!r}")
-        headers[name.strip()] = value
+        headers[name] = value
     return headers
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--target", choices=[t.value for t in DeployTarget])
+    parser.add_argument("--strength", choices=[s.value for s in ClaimStrength], default=ClaimStrength.PRODUCTION_VERIFIED.value)
+    parser.add_argument("--expected-sha", required=True)
+
+    parser.add_argument("--deployment", help="Vercel deployment ID, hostname, or URL")
+    parser.add_argument("--origin", help="Operational canonical origin when the deployment hostname is protected or noncanonical")
+    parser.add_argument("--team-id", default=os.getenv("VERCEL_TEAM_ID"))
+    parser.add_argument("--token", default=os.getenv("VERCEL_TOKEN"))
+    parser.add_argument("--probe", action="append", type=parse_probe, default=[])
+    parser.add_argument("--header", action="append", default=[], metavar="NAME=VALUE")
+    parser.add_argument("--source-header", default=os.getenv("SOURCE_COMMIT_HEADER"), help="Runtime response header that carries the deployed source SHA")
+    parser.add_argument("--source-path", default="/", help="Path used to read --source-header")
+
+    parser.add_argument("--observed-sha")
+    parser.add_argument("--check", action="append", default=[], metavar="NAME=true|false")
+    return parser.parse_args()
 
 
 def legacy_verify(args: argparse.Namespace) -> tuple[dict[str, object], int]:
@@ -144,6 +134,9 @@ def live_verify(args: argparse.Namespace) -> tuple[dict[str, object], int]:
             requested_strength=ClaimStrength(args.strength),
             expected_target=DeployTarget(args.target) if args.target else None,
             deployment_headers=headers,
+            runtime_origin=args.origin,
+            source_header=args.source_header,
+            source_path=args.source_path,
         )
     except (ValueError, VercelApiError) as exc:
         return {"allowed": False, "reason": type(exc).__name__, "detail": str(exc)}, 2
@@ -154,10 +147,7 @@ def live_verify(args: argparse.Namespace) -> tuple[dict[str, object], int]:
 
 def main() -> int:
     args = parse_args()
-    if args.deployment:
-        result, code = live_verify(args)
-    else:
-        result, code = legacy_verify(args)
+    result, code = live_verify(args) if args.deployment else legacy_verify(args)
     print(json.dumps(result, sort_keys=True, indent=2))
     return code
 

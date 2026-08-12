@@ -4,18 +4,18 @@ Independent GlacierEQ deployment-verification utility for proving what code and 
 
 ## Purpose
 
-A preview URL, a green build, or a caller-supplied boolean does not prove production truth. This repository now performs the readback itself:
+A preview URL, a green build, or a caller-supplied boolean does not prove production truth. This repository performs the readback itself:
 
 ```text
 Vercel deployment ID / URL
         ↓
 authenticated deployment metadata
         ↓
-observed deployed Git SHA
+operational origin / canonical alias
+        ↓
+source identity from metadata OR named runtime response header
         ↓
 live HTTP semantic probes
-        ↓
-source + behavior evidence
         ↓
 deterministic verification receipt
         ↓
@@ -24,50 +24,59 @@ claim strength decision
 
 The existing environment-ceiling model remains intact: Preview cannot mint a Production Verified claim, Staging cannot exceed its deployment ceiling, and Production Verified requires exact source identity plus passing semantic invariants.
 
-## What is real now
+## Real readback paths
 
-`src/deployment_readback.py` adds:
+`src/deployment_readback.py` supports:
 
-- authenticated `GET /v13/deployments/{idOrUrl}` readback against the Vercel REST API;
-- optional team scoping with `teamId`;
-- deployed Git SHA extraction from Vercel deployment metadata;
-- target inference from deployment metadata;
-- live HTTP probes against the actual deployment URL;
-- expected status checks;
-- required body-content checks;
-- JSON-path equality checks;
+- authenticated `GET /v13/deployments/{idOrUrl}` against the Vercel REST API;
+- optional `teamId` scoping;
+- deployed Git SHA extraction from Vercel metadata when present;
+- production alias selection when Vercel's unique deployment hostname is protected or noncanonical;
+- explicit `--origin` override when a specific runtime origin must be probed;
+- runtime source-SHA fallback from an explicitly named response header such as `x-glaciereq-source-commit`;
+- disagreement detection when metadata SHA and runtime-header SHA both exist but differ;
+- live HTTP status, body-text, and JSON-path semantic probes;
 - latency and response-body SHA-256 observations;
-- deterministic metadata and final receipt fingerprints;
-- fail-closed source mismatch and semantic drift behavior.
+- deterministic metadata and final receipt fingerprints.
+
+The runtime-header fallback exists because real Vercel deployments may be operationally valid while the deployment metadata exposed to a client does not contain a Git SHA. That gap must be resolved from observed runtime evidence, not by inventing a source identity.
 
 ## Live verification
-
-Set credentials without committing them:
 
 ```bash
 export VERCEL_TOKEN='...'
 export VERCEL_TEAM_ID='team_...'
 ```
 
-Then verify a deployment:
+Metadata carries Git SHA:
 
 ```bash
 python scripts/verify_deployment_claim.py \
   --deployment my-app.vercel.app \
   --target PRODUCTION \
-  --strength PRODUCTION_VERIFIED \
   --expected-sha "$GITHUB_SHA" \
   --probe 'homepage,/,200,contains=Expected Heading' \
   --probe 'health,/api/health,200,json=ok:true'
 ```
 
-The command exits `0` only when the requested claim is supported. It exits non-zero on source drift, failed probes, target mismatch, malformed evidence, missing credentials, or Vercel metadata failure.
+Runtime carries Git SHA instead:
 
-Extra request headers can be supplied with repeated `--header NAME=VALUE` arguments for protected/readback environments.
+```bash
+python scripts/verify_deployment_claim.py \
+  --deployment dpl_... \
+  --origin https://my-app.vercel.app \
+  --target PRODUCTION \
+  --expected-sha "$GITHUB_SHA" \
+  --source-header x-glaciereq-source-commit \
+  --source-path / \
+  --probe 'homepage,/,200,contains=Expected Heading'
+```
+
+The command exits `0` only when the requested claim is supported. It exits non-zero on source drift, unreadable source headers, metadata/runtime source disagreement, failed probes, target mismatch, malformed evidence, missing credentials, or Vercel metadata failure.
 
 ## Compatibility mode
 
-Existing CI jobs that already extracted trusted readback data upstream still work:
+Existing CI jobs that already extracted trusted evidence upstream remain supported:
 
 ```bash
 python scripts/verify_deployment_claim.py \
@@ -75,11 +84,10 @@ python scripts/verify_deployment_claim.py \
   --strength PRODUCTION_VERIFIED \
   --expected-sha abc123 \
   --observed-sha abc123 \
-  --check homepage=true \
-  --check machine_contract=true
+  --check homepage=true
 ```
 
-This mode is preserved for compatibility. **Live Vercel readback is the stronger path** because the verifier obtains the deployment metadata and semantic observations itself.
+Live readback is stronger because the verifier obtains operational observations itself.
 
 ## Run the proof suite
 
@@ -88,24 +96,20 @@ python -m unittest discover -s tests -v
 python scripts/operate.py
 ```
 
-`operate.py` uses an injected deterministic transport to exercise the complete metadata → source readback → live probe → claim-decision pipeline without network credentials. The production transport uses Python's standard HTTPS stack and requires a Vercel access token.
+`operate.py` deliberately models the harder real condition: production metadata lacks Git SHA, the unique hostname is not the desired operational origin, a canonical alias is selected, and source identity is recovered from a runtime response header before semantic probes are admitted.
 
 ## Architecture
 
 | Surface | Responsibility |
 |---|---|
 | `src/preview_gate.py` | Claim-strength ceilings and deterministic evidence decisions |
-| `src/deployment_readback.py` | Real Vercel metadata retrieval and deployment HTTP probes |
-| `scripts/verify_deployment_claim.py` | Live/compatibility CLI |
-| `scripts/operate.py` | Full executable demonstration |
-| `tests/test_deployment_readback.py` | Source, probe, target, and authentication behavior tests |
+| `src/deployment_readback.py` | Vercel metadata, runtime source identity, origin resolution, live probes |
+| `scripts/verify_deployment_claim.py` | Live and compatibility CLI |
+| `scripts/operate.py` | Full metadata-gap executable demonstration |
+| `tests/test_deployment_readback.py` | Source, alias, probe, target, authentication behavior |
 
-## Completion boundary
+## Operational boundary
 
-This repository is a verification tool, not a hosted application, so its natural operational form is a runnable CLI/library used by deployment pipelines. It does not need to deploy itself to Vercel to fulfill its purpose.
+This repository is a CLI/library, not a hosted application, so its natural completion target is a reproducible verifier used by deployment pipelines. A Production Verified receipt still requires a real target deployment, source identity, and meaningful semantic probes. Missing facts remain missing; the tool does not promote around them.
 
-A **live Production Verified receipt still requires an actual target deployment, `VERCEL_TOKEN`, an expected source SHA, and at least one meaningful semantic probe**. The repository does not fabricate that receipt in their absence.
-
-## Non-claims
-
-This project is not affiliated with or endorsed by Vercel. It uses documented public Vercel APIs and makes no claim of proprietary access.
+This project is not affiliated with or endorsed by Vercel. It uses documented public Vercel APIs and explicitly declared runtime evidence surfaces.
