@@ -1,5 +1,5 @@
 {
-  "schema": "glaciereq.canonical-position-proof.v1",
+  "schema": "glaciereq.apex-position-proof.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
   "source_sha": "9a3076ba71a6792ea452681fa0f532663635fb4e",
   "workflow": {

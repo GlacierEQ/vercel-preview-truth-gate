@@ -1,10 +1,10 @@
 {
-  "schema": "glaciereq.repo-canonical-position.v1",
+  "schema": "glaciereq.repo-apex-position.v1",
   "repository": "GlacierEQ/vercel-preview-truth-gate",
   "position_state": "RESOLVED",
-  "role": "CANONICAL_SPECIALIST",
+  "role": "APEX_SPECIALIST",
   "company_target": "Vercel",
-  "canonical_identity": "preview-truth-gate",
+  "apex_identity": "preview-truth-gate",
   "owns": "environment_bound_production_claim_truth_gate",
   "unique_value": [
     "preview context cannot authorize production verification",
@@ -53,7 +53,7 @@
   "evidence_refs": [
     "ISSUE_CONTRACT.md",
     "machine/target-contract.json",
-    "machine/canonical-position-proof.json",
+    "machine/apex-position-proof.json",
     "machine/proof_receipt.json",
     "machine/operability_receipt.json"
   ],

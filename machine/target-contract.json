@@ -3,7 +3,7 @@
   "identity": {
     "repository_id": "GlacierEQ/vercel-preview-truth-gate",
     "family": "elite-estate",
-    "canonical_identity": "preview-truth-gate"
+    "apex_identity": "preview-truth-gate"
   },
   "current": {
     "state": "EVOLVING",
@@ -15,7 +15,7 @@
     "proof_receipt_bound": true,
     "authority_bound": true,
     "deployed": false,
-    "canonical_position_resolved": true,
+    "apex_position_resolved": true,
     "exact_head_proof": {
       "source_sha": "9a3076ba71a6792ea452681fa0f532663635fb4e",
       "workflow_run_id": 31401313384,
@@ -50,7 +50,7 @@
     "integration_exercised": false
   },
   "promotion": {
-    "canonical_gate": "PASS",
+    "apex_gate": "PASS",
     "next_state": "EVOLVING",
     "require_exact_source_sha": true,
     "require_receipt": true,
